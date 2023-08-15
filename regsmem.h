@@ -7,26 +7,26 @@
 
 struct regs
 {
-  union af
+  union
   {
     uint16_t u16;
     uint8_t  u8[2];
-  };
-  union bc
+  } af;
+  union
   {
     uint16_t u16;
     uint8_t  u8[2];
-  };
-  union de
+  } bc;
+  union
   {
     uint16_t u16;
     uint8_t  u8[2];
-  };
-  union hl
+  } de;
+  union
   {
     uint16_t u16;
     uint8_t  u8[2];
-  };
+  } bl;
   uint16_t sp;
   uint16_t pc;
 };
@@ -101,3 +101,22 @@ struct mmap
 #define ADDR_HRAM_START      0xFF80
 #define ADDR_HRAM_END        0xFFFE
 #define ADDR_INTERRUPT       0xFFFF
+
+
+/*
+   ____              __  _         
+  / __/_ _____  ____/ /_(_)__  ___ 
+ / _// // / _ \/ __/ __/ / _ \/ _ \
+/_/  \_,_/_//_/\__/\__/_/\___/_//_/
+                                   
+   ___           __       __                  
+  / _ \_______  / /____  / /___ _____  ___ ___
+ / ___/ __/ _ \/ __/ _ \/ __/ // / _ \/ -_|_-<
+/_/  /_/  \___/\__/\___/\__/\_, / .__/\__/___/
+                           /___/_/
+ */
+
+void     write_himem         (uint16_t address, uint8_t value);
+void     write_mem           (uint16_t address, uint8_t value);
+uint8_t  read_himem          (uint16_t address);
+uint8_t  read_mem            (uint16_t address);
