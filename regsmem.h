@@ -1,3 +1,6 @@
+#ifndef REGSMEM_H
+#define REGSMEM_H
+
 /*
    ___  ______________________________  ____
   / _ \/ __/ ___/  _/ __/_  __/ __/ _ \/ __/
@@ -48,10 +51,6 @@ struct regs
 #define REGL  hl.u8[1]
 
 #define FLAGSREG af.u8[1]
-#define FLAG_Z   FLAGSREG & (1 << 7)
-#define FLAG_N   FLAGSREG & (1 << 6)
-#define FLAG_H   FLAGSREG & (1 << 5)
-#define FLAG_C   FLAGSREG & (1 << 4)
 
 /*
    __  _________  _______  _____  __
@@ -120,3 +119,5 @@ void     write_himem         (uint16_t address, uint8_t value);
 void     write_mem           (uint16_t address, uint8_t value);
 uint8_t  read_himem          (uint16_t address);
 uint8_t  read_mem            (uint16_t address);
+
+#endif /* #ifndef REGSMEM_H */
