@@ -1,6 +1,12 @@
 #ifndef REGSMEM_H
 #define REGSMEM_H
 
+typedef union
+{
+  uint16_t u16;
+  uint8_t  u8[2];
+} uint;
+
 /*
    ___  ______________________________  ____
   / _ \/ __/ ___/  _/ __/_  __/ __/ _ \/ __/
@@ -8,31 +14,15 @@
 /_/|_/___/\___/___/___/ /_/ /___/_/|_/___/ 
  */
 
-struct regs
+typedef struct
 {
-  union
-  {
-    uint16_t u16;
-    uint8_t  u8[2];
-  } af;
-  union
-  {
-    uint16_t u16;
-    uint8_t  u8[2];
-  } bc;
-  union
-  {
-    uint16_t u16;
-    uint8_t  u8[2];
-  } de;
-  union
-  {
-    uint16_t u16;
-    uint8_t  u8[2];
-  } bl;
+  uint     af;
+  uint     bc;
+  uint     de;
+  uint     bl;
   uint16_t sp;
   uint16_t pc;
-};
+} regs;
 
 /* Allow access as regs.REGAF (for example) */
 #define REGAF af.u16
@@ -63,7 +53,7 @@ struct regs
 /_/ |_/____/____/_/|_/___/___/___/___/_/|_/\___/ 
  */
 
-struct mmap
+typedef struct
 {
   uint8_t rombank0  [0x4000];
   uint8_t rombank1n [0x4000];
@@ -75,7 +65,7 @@ struct mmap
   uint8_t ioregs      [0x7F];
   uint8_t hram        [0x7e];
   uint8_t interrupt_enable;
-};
+} mmap;
 
 #define ADDR_ROM0_START         0x0
 #define ADDR_ROM0_END        0x3FFF

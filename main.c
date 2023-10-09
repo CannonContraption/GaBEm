@@ -2,6 +2,7 @@
 #include <stdint.h>
 
 #include "regsmem.c"
+#include "cpu.h"
 
 int main(
     int    argc,

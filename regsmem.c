@@ -1,7 +1,7 @@
 #include "regsmem.h"
 
-struct regs sysregs;
-struct mmap sysmem;
+regs sysregs;
+mmap sysmem;
 
 void write_himem(
     uint16_t address,
