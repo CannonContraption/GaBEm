@@ -2,16 +2,16 @@
 
 static uint8_t bytes_read;
 static uint8_t bytes_total;
-static uint8_t instruction;
+static uint8_t c_inst; /* Current instruction */
 
 static void inc_flags(
     uint8_t value)
 {
-  regs.FLAGSREG &= ~(FLAG_N);
+  sysregs.FLAGSREG &= ~(FLAG_N);
   if (!value)
-    regs.FLAGSREG |= FLAG_Z;
+    sysregs.FLAGSREG |= FLAG_Z;
   if (value & 0x7 == 0)
-    regs.FLAGSREG |= FLAG_H;
+    sysregs.FLAGSREG |= FLAG_H;
 }
 /*
   inc()
@@ -19,49 +19,49 @@ static void inc_flags(
   Increment instruction. Takes some register based on the instruction and
   increments whatever is there.
  */
-#define _INC_REG(register) { regs.register ++; inc_flags(regs.register); }
+#define _INC_REG(register) { sysregs.register ++; inc_flags(sysregs.register); }
 static void inc ()
 {
-  switch(instruction)
+  switch(c_inst)
     {
     case 0x03:
-      _INC_REG (regs.REGBC);
+      _INC_REG (REGBC);
       break;
     case 0x04:
-      _INC_REG (regs.REGB);
+      _INC_REG (REGB);
       break;
     case 0x0C:
-      _INC_REG (regs.REGC);
+      _INC_REG (REGC);
       break;
     case 0x13:
-      _INC_REG (regs.REGDE);
+      _INC_REG (REGDE);
       break;
     case 0x14:
-      _INC_REG (regs.REGD);
+      _INC_REG (REGD);
       break;
     case 0x1C:
-      _INC_REG (regs.REGE);
+      _INC_REG (REGE);
       break;
     case 0x23:
-      _INC_REG (regs.REGHL);
+      _INC_REG (REGHL);
       break;
     case 0x24:
-      _INC_REG (REGS.REGH);
+      _INC_REG (REGH);
       break;
     case 0x2C:
-      _INC_REG (REGS.REGL);
+      _INC_REG (REGL);
       break;
     case 0x33:
-      _INC_REG (REGS.REGSP);
+      _INC_REG (REGSP);
       break;
     case 0x34:
       write_mem(
-          regs.REGHL,
-          read_mem (regs.REGHL) + 1);
-      regs.REGHL ++;
+          sysregs.REGHL,
+          read_mem (sysregs.REGHL) + 1);
+      sysregs.REGHL ++;
       break;
     case 0x3C:
-      _INC_REG (regs.REGA);
+      _INC_REG (REGA);
       break;
     }
 }
@@ -69,11 +69,11 @@ static void inc ()
 static void dec_flags(
     uint8_t value)
 {
-  regs.FLAGSREG |= FLAG_N;
+  sysregs.FLAGSREG |= FLAG_N;
   if (!value)
-    regs.FLAGSREG |= FLAG_Z;
+    sysregs.FLAGSREG |= FLAG_Z;
   if (value & 0x7 == 0x7)
-    regs.FLAGSREG |= FLAG_H;
+    sysregs.FLAGSREG |= FLAG_H;
 }
 /*
   dec()
@@ -81,71 +81,73 @@ static void dec_flags(
   Decrement instruction. Takes some register based on the instruction and
   decrements whatever is there.
  */
-#define _DEC_REG(register) { regs.register --; dec_flags(regs.register); }
+#define _DEC_REG(register) { sysregs.register --; dec_flags(sysregs.register); }
 static void dec ()
 {
-  switch (instruction)
+  switch (c_inst)
     {
     case 0x05:
-      _DEC_REG (regs.REGB);
+      _DEC_REG (REGB);
       break;
     case 0x0B:
-      _DEC_REG (regs.REGBC);
+      _DEC_REG (REGBC);
       break;
     case 0x0D:
-      _DEC_REG (regs.REGC);
+      _DEC_REG (REGC);
       break;
     case 0x15:
-      _DEC_REG (regs.REGD);
+      _DEC_REG (REGD);
       break;
     case 0x1B:
-      _DEC_REG (regs.REGDE);
+      _DEC_REG (REGDE);
       break;
     case 0x1D:
-      _DEC_REG (regs.REGE);
+      _DEC_REG (REGE);
       break;
     case 0x25:
-      _DEC_REG (regs.REGH);
+      _DEC_REG (REGH);
       break;
     case 0x2B:
-      _DEC_REG (regs.REGHL);
+      _DEC_REG (REGHL);
       break;
     case 0x2D:
-      _DEC_REG (regs.REGL);
+      _DEC_REG (REGL);
       break;
     case 0x35:
       write_mem(
-          regs.REGHL,
-          read_mem (regs.REGHL) - 1);
+          sysregs.REGHL,
+          read_mem (sysregs.REGHL) - 1);
       break;
     case 0x3B:
-      _DEC_REG (regs.REGSP);
+      _DEC_REG (REGSP);
       break;
     case 0x3D:
-      _DEC_REG (regs.REGA);
+      _DEC_REG (REGA);
       break;
     }
 }
 
 static void add (
-    uint8_t * instruction)
+    uint8_t * inst)
 {
   uint augend;
   uint addend;
 }
 
 int exec(
-    uint8_t address)
+    uint16_t address)
 {
   uint8_t cycles = 0;
 
   for (;;)
     {
-      instruction = read_mem(
+      c_inst = read_mem(
           address);
 
-      switch (instruction)
+      switch (c_inst)
         {
+        case 0x76: /* Halt */
+          return 0x76;
         case 0x00: /* NOP */
           break;
         case 0x03: /* INC */
@@ -178,12 +180,14 @@ int exec(
           break;
         default:
           fprintf(
+              stderr,
               "EMULATOR INTERNAL ERROR: Invalid opcode 0x%x !?\n",
-              instruction);
+              c_inst);
+          return -1;
         }
 
-      cycles      += is[instruction].cycles;
-      instruction += is[instruction].bytes;
+      cycles  += is[c_inst].duration_tstates * 4;
+      address += is[c_inst].bytes;
       
     }
 }

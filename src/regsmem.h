@@ -19,7 +19,7 @@ typedef struct
   uint     af;
   uint     bc;
   uint     de;
-  uint     bl;
+  uint     hl;
   uint16_t sp;
   uint16_t pc;
 } regs;
