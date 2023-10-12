@@ -107,7 +107,19 @@ typedef struct
 
 void     write_himem         (uint16_t address, uint8_t value);
 void     write_mem           (uint16_t address, uint8_t value);
+int8_t write_mem_chunk       (uint16_t address, uint8_t * buf, uint16_t count);
 uint8_t  read_himem          (uint16_t address);
 uint8_t  read_mem            (uint16_t address);
+
+/*
+    ______        __  _             _____                       __  _             
+   /_  __/__ ___ / /_(_)__  ___ _  / ___/__  ___ _  _____ ___  / /_(_)__  ___  ___
+    / / / -_|_-</ __/ / _ \/ _ `/ / /__/ _ \/ _ \ |/ / -_) _ \/ __/ / _ \/ _ \(_-<
+   /_/  \__/___/\__/_/_//_/\_, /  \___/\___/_//_/___/\__/_//_/\__/_/\___/_//_/___/
+                          /___/  
+*/
+
+/* Usual address to start a program, for test function */
+#define GB_START_ADDR 0x100
 
 #endif /* #ifndef REGSMEM_H */
